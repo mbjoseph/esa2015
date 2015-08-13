@@ -1,0 +1,8 @@
+\institute{University of Colorado, Boulder, Ecology and Evolutionary Biology}
+
+\usefonttheme{professionalfonts} % using non standard fonts for beamer
+\usepackage{mathpazo}
+\usepackage[scaled=.95]{helvet}% uncomment these if required
+\usepackage{courier}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{avant}

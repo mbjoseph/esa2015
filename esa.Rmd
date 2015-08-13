@@ -1,0 +1,498 @@
+---
+title: Empirical and theoretical opportunities in host-symbiont community ecology
+author: "Max Joseph"
+date: "July 30, 2015"
+output: 
+  beamer_presentation:
+    theme: "Pittsburgh"
+    colortheme: "spruce"
+    fig_crop: false
+    includes:
+      in_header: sty.txt
+---
+
+## Dilution or amplification? 
+
+Contention
+
+1) 'generality'
+
+## Generality
+
+Civitello et al. 2015
+
+```{r fig.width=6, fig.height=6, echo=FALSE, message=FALSE}
+library(ggplot2)
+d <- read.csv('civitello.csv', as.is=TRUE)
+d$se <- sqrt(d$var_g)
+
+d$lo <- d$g - d$se
+d$hi <- d$g + d$se
+
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x) - 2)
+}
+
+d$year <- as.numeric(substrRight(d$Citation, 6))
+d$fyear <- factor(d$year)
+
+ord <- order(d$year, d$g)
+d <- d[ord, ]
+
+year_index <- rep(NA, length(levels(d$fyear)))
+for (i in 1:length(levels(d$fyear))){
+  year_index[i] <- which(d$year == unique(d$year)[i])[1]
+}
+
+year_d <- data.frame(index=year_index, val=unique(d$year))
+
+ggplot(d) + 
+  geom_point(aes(x=g, y=1:nrow(d))) + 
+  geom_segment(aes(x=d$lo, xend=d$hi, y=1:nrow(d), yend=1:nrow(d)), size=.2) + 
+  ggtitle("Effects of host diversity on parasite abundance") + 
+  xlab("Effect size (Hedge's g +/- SE)") + 
+  ylab('') + 
+  scale_y_discrete(breaks=year_d$index, labels=year_d$val) + 
+  geom_vline(xintercept=0, linetype='dashed')
+```
+
+## Dilution or amplification? 
+
+Contention
+
+1) 'generality'
+2) applicability to human disease
+
+## Applicability to human disease
+
+\centerline{\includegraphics[height=2in]{civitello.png}}
+
+## Dilution or amplification? 
+
+Contention
+
+1) 'generality'
+2) applicability to human disease
+3) justification for conservation
+
+## Thought experiment
+
+Assume that we know $\mu_{\beta_{diversity}} < 0$
+
+```{r, echo=FALSE, fig.width=4, fig.height=4}
+plot(1:100, -2 * 1:100, type='l',
+     xaxt='n', yaxt='n', 
+     ylab='', xlab='')
+mtext("Species richness", side=1, 
+      line=0.2)
+mtext("Disease risk", side=2, 
+      line=0.2)
+```
+
+## Thought experiment
+
+Biodiversity on average is good for our health.
+
+Would we conserve biodiversity?
+
+## Thought experiment
+
+Would we conserve biodiversity?
+
+```{r echo=FALSE, fig.width=4, fig.height=2.5}
+Cause <- c("Tobacco", "Poor diet/inactivity", "Alcohol consumption", "Microbial agents", "Toxic agents", "Motor vehicle", "Firearms", "Sexual behavior", "Illicit drug use")
+Percent <- c(18.1, 16.6, 3.5, 3.1, 2.3, 1.8, 1.2, .8, .7)
+d <- data.frame(Cause, Percent)
+d$cause <- reorder(d$Cause, order(Percent, decreasing=TRUE))
+ggplot(d) + 
+  geom_bar(aes(x=cause, y=Percent), stat='identity') + 
+  xlab("Cause of death") + 
+  ylab("Percent of total deaths") + 
+  theme(axis.text.x=element_text(angle=45, hjust=1)) + 
+  theme(axis.title.y = element_text(size = rel(.7))) + 
+  theme(axis.title.x = element_text(size=rel(.7))) + 
+  theme(axis.text.x = element_text(size=rel(.7), color='black'))
+```
+
+Mokdad et al. 2004. Actual causes of death in the U.S.
+
+## Not just the mean
+
+Assuming biodiversity reduces disease on average:
+
+```{r, echo=FALSE, fig.width=6, fig.height=6}
+mu_beta <- c(-.1, -1)
+sigma_beta <- c(.1, 1)
+n_slopes <- 20
+x <- seq(-5, 5, .01)
+par(mfrow=c(2, 2))
+for (i in 1:length(mu_beta)){
+  for (j in 1:length(sigma_beta)){
+    plot(x=x, y=dnorm(x, mu_beta[i], sigma_beta[j]),  
+         xlab="Effect of host richness on disease", 
+         ylab="Probability density", 
+         type='l')
+    polygon(x=c(0, 0, x[x > 0]), 
+            y=c(0, dnorm(0, mu_beta[i], sigma_beta[j]), 
+                dnorm(x[x > 0], mu_beta[i], sigma_beta[j])), 
+            col='red')
+    mtext(bquote(~ mu[beta] == .(mu_beta[i])), side=3, line=2)
+    mtext(bquote(~ sigma[beta] == .(sigma_beta[j])), side=3, line=1)
+    abline(v=0, lty=2)
+  }
+}
+```
+
+## Regardless of the mean
+
+**We all care about variation**
+
+## Challenges and opportunities
+
+1. **Thinking beyond the mean effect**
+
+- What explains the variance?
+
+
+## Challenges and opportunities
+
+1. **Thinking beyond the mean effect**
+
+- What explains the variance?
+
+2. **Transmission dynamics**
+
+## Transmission dynamics
+
+Density-dependent: 
+
+$$\beta S I$$
+
+\centerline{\includegraphics[height=2in]{/home/max/Dropbox/esa2015/City_of_Manchester_Stadium_concert_crowd.jpg}}
+
+## Transmission dynamics
+
+Frequency-dependent: 
+
+$$\beta S I / N$$
+
+Contact rate independent from $N$
+
+## Tranmission dynamics, diversity, and disease
+
+\centerline{\includegraphics[height=1.5in]{ostfeld.png}}
+
+## Other transmission functions
+
+Constant risk:
+
+$\dfrac{dI}{dt} = \beta S$
+
+Power law:
+
+$\dfrac{dI}{dt} = \beta S^p I^q$
+
+Negative binomial:
+
+$\dfrac{dI}{dt} = (kS) log(1 + \frac{\beta I}{k})$
+
+## Support for other transmission functions
+
+(Orlofske, Joseph, et al. *in prep*)
+
+```{r, echo=FALSE, message=FALSE, fig.width=6, fig.height=4, fig.align='center'}
+n <- c(1, 3, 1, 2, 4, 
+       0, 0, 2, 0, 1, 
+       0, 6, 1, 3, 8)
+res <- factor(rep(c("Only considered FD & DD", 
+                    "FD & DD supported", 
+                    "Other supported"), 
+                  5))
+type <- rep(c("Arthropod", "Bacteria", "Fungi", "Macroparasites", "Viruses"), 3)
+d <- data.frame(n, res, type)
+pd <- data.frame(result = rep(res, times=n), type = rep(type, times=n))
+pd <- subset(pd, type != "Arthropod")
+pd <- subset(pd, result != 'Only considered FD & DD')
+ggplot(pd, aes(x=result)) + 
+  geom_bar() + 
+  facet_wrap(~ type, ncol=1) + 
+  theme(axis.text.y = element_text(color='black', size=10)) + 
+  coord_flip() + 
+  xlab('') + ylab("Count")
+```
+
+## Evaluating support for different models
+
+1) Build set of transmission functions (DD, FD, etc.)
+
+2) Design experiments varying:
+
+- $P$: number of parasites
+- $H$: number of hosts
+- $t$: exposure time
+- $\frac{P}{v}$: parasite density
+
+## Evaluating support for different models
+
+```{r, echo=FALSE, fig.width=7, fig.height=5, results="hide", message=FALSE}
+source("~/Documents/manuscripts/rib_transmission/analysis/max_revised/mechanistic_mods.R")
+source("~/Documents/manuscripts/rib_transmission/analysis/max_revised/likelihoods.R")
+library(bbmle)
+library(knitr)
+
+vol_data <- read.csv("~/Documents/manuscripts/rib_transmission/data/Volume.csv")
+names(vol_data)
+metacerc<-vol_data$Meta # Number of metacercariae recovered from dissections 
+vol<-vol_data$Volume #Volumes for the experimental replicates 
+Cerc<-vol_data$Cerc_Number
+host<-1 #Need to include this variable for the number of tadpoles
+time<-30 #Need to include this variable in the models 
+
+#Plot Experimental Data
+plot(jitter(Cerc), metacerc, xlab="Initial number of parasites", 
+     ylab="Number of successful parasites")
+title(substitute(paste(italic('Ribeiroia'), " transmission")))
+```
+
+## Evaluating support for different models
+
+```{r, echo=FALSE, fig.width=7, fig.height=5, results="hide", message=FALSE}
+source("~/Documents/manuscripts/rib_transmission/analysis/max_revised/mechanistic_mods.R")
+source("~/Documents/manuscripts/rib_transmission/analysis/max_revised/likelihoods.R")
+library(bbmle)
+library(knitr)
+
+vol_data <- read.csv("~/Documents/manuscripts/rib_transmission/data/Volume.csv")
+names(vol_data)
+metacerc<-vol_data$Meta # Number of metacercariae recovered from dissections 
+vol<-vol_data$Volume #Volumes for the experimental replicates 
+Cerc<-vol_data$Cerc_Number
+host<-1 #Need to include this variable for the number of tadpoles
+time<-30 #Need to include this variable in the models 
+
+#Plot Experimental Data
+plot(jitter(Cerc), metacerc, xlab="Total number of parasites", 
+     ylab="Number of successful parasites")
+
+# set up x-axis values for plotting best fit
+xvals <- seq(min(Cerc), max(Cerc), length.out=200)
+
+par <- 1E-3
+fit_dd1 <- optim(par, fn=NLL.den1, 
+                 Np=Cerc, H=host, v=vol, t=time, metacerc=metacerc, 
+                 method="Brent", 
+                 lower=0, upper=.01)
+fit_dd1
+#lines(Cerc, y=densdep1(Beta=fit_dd1$par, Np=Cerc, H=host, v=vol, t=time), lty=2)
+lines(xvals, y=densdep1(Beta=fit_dd1$par, Np=xvals, H=host, v=xvals/30, t=time), lty=2)
+
+par <- 1E-4
+fit_fd1 <- optim(par, fn=NLL.freq1, 
+                 Np=Cerc, H=host, t=time, metacerc=metacerc, 
+                 method="Brent", 
+                 lower=0, upper=1)
+fit_fd1
+lines(xvals, y=freqdep1(Beta=fit_fd1$par, Np=xvals, H=host, t=time), lty=1)
+
+par <- c(.06, .13)
+fit_NB1 <- optim(par, fn=NLL.NB1, 
+                 Np=Cerc, t=time, metacerc=metacerc)
+fit_NB1
+lines(xvals, y=NB1(Beta=fit_NB1$par[1], k=fit_NB1$par[2], Np=xvals, t=time), 
+      col=2, lwd=2)
+legend('topleft', col=c(1, 1, 2), lty=c(2, 1, 1), lwd=c(1, 1, 2), 
+       legend=c("Density dependent", "Frequency dependent", "Negative binomial"), 
+       bty='n')
+title(substitute(paste(italic('Ribeiroia'), " transmission")))
+```
+
+## Summary of support
+
+*Ribeiroia*:
+
+- $P$: neg. binom.
+- $H$: power law
+- $t$: power law
+- $\frac{P}{v}$: uninformative
+
+\centerline{\includegraphics[height=1.4in]{spidey.jpg}}
+
+## Summary of support
+
+*Diplostomum spathaceum* (Karvonen et al. 2003):
+
+- $\frac{P}{v}$: neg. binom. and power law
+- $P$: power law
+
+\centerline{\includegraphics[height=1.4in]{diplo.png}}
+
+## Summary of support
+
+*Centrocestus armatus* experiments (Paller et al. 2007):
+
+- $\frac{P}{v}$: neg. binom.
+- $P$: neg. binom.
+
+## Modes of transmission, diversity, and disease
+
+What else might we expect theoretically?
+
+Where are we empirically? 
+
+\centerline{\includegraphics[height=1.5in]{ostfeld.png}}
+
+
+## Challenges and opportunities
+
+1. **Thinking beyond the mean effect**
+
+- What explains the variance?
+
+2. **Transmission dynamics**
+
+- What models have support? 
+- How to our predictions change?
+
+## Among host competition
+
+Effect of richness depends on **interaction** between competition and transmission
+
+\centerline{\includegraphics[height=1.7in]{compete.png}}
+
+Strauss et al. 2015
+
+watch for O'Reagan et al. *in press* AmNat
+
+## Among parasite competition
+
+![](/home/max/Dropbox/esa2015/johnson.jpg)
+
+## Theoretical gaps
+
+Multi-host, multi-parasite systems: 
+
+- interaction between host and parasite diversity? 
+- role of competition? 
+- evolution and diversity?
+- mathematical tractability?
+
+## Challenges and opportunities
+
+1. **Linking existing theory and data**
+
+- Competence, extirpation risk, and life history
+- Modes of transmission
+- Competition
+
+2. **Extending the framework**
+
+- *Biodiversity and symbionts*
+
+## Biodiversity and symbionts
+
+Most processes non-specific to parasites
+
+- how does host diversity affect symbiont diversity?
+
+![](/home/max/Documents/manuscripts/grazing/presentations/CSU_visit/res.png)
+
+## Biodiversity and symbionts
+
+Similar to habitat area-heterogeneity trade-off in free living species
+
+![](/home/max/Documents/manuscripts/grazing/presentations/CSU_visit/allouche2.pdf)
+
+## Biodiversity and symbionts
+
+Role of parasitism vs. mutualism
+
+![](/home/max/Documents/manuscripts/grazing/presentations/CSU_visit/res2.png)
+
+## Empirical evaluation
+
+San Francisco Bay Area amphibian parasites
+
+![](/home/max/Documents/manuscripts/grazing/presentations/CSU_visit/site-scaling.pdf)
+
+## Why symbionts in general? 
+
+- More data
+- Many parasites are facultative
+- Broader class of species interactions 
+
+|     |     |     |
+|:----|----:|----:|
+| -/- | -/0 | -/+ |
+|     | 0/0 | 0/+ |
+|     |     | +/+ |
+
+
+
+## Challenges and opportunities
+
+1. **Linking existing theory and data**
+
+- Competence, extirpation risk, and life history
+- Modes of transmission
+- Competition
+
+2. **Extending the framework**
+
+- Biodiversity and symbionts
+- *Scale transitions*
+
+## Scale transitions
+
+Local dynamics
+
+![](/home/max/Dropbox/esa2015/A_walk_in_the_woods_(9162109840).jpg)
+
+## Scale transitions
+
+Local dynamics $\rightarrow$ regional dynamics
+
+![](/home/max/Dropbox/esa2015/Prey_Lang_Forest_Aerial.jpg)
+
+## Scale transitions: theoretical results
+
+Local dynamics $\neq$ regional dynamics if
+
+- local dynamics are non-linear
+- densities vary spatially
+- conditions vary spatially
+
+
+(Chesson et al. 2005)
+
+## Temporal scale discrepancies
+
+Most theory (but see Roche et al. 2012): short term 
+
+- instantaneous rates
+- $R_0$
+- force of infection
+
+Most data: long-run 
+
+- prevalence 
+- seroprevalence 
+- density of infected hosts
+
+## Challenges and opportunities
+
+1. **Linking existing theory and data**
+
+- Competence, extirpation risk, and life history
+- Modes of transmission
+- Competition
+
+2. **Extending the framework**
+
+- Biodiversity and symbionts
+- Scale transitions
+
+## Closing thoughts
+
+
+
+## Acknowledgements
