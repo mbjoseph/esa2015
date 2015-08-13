@@ -353,40 +353,19 @@ Where are we empirically?
 - What models have support? 
 - How to our predictions change?
 
-## Among host competition
-
-Effect of richness depends on **interaction** between competition and transmission
-
-\centerline{\includegraphics[height=1.7in]{compete.png}}
-
-Strauss et al. 2015
-
-watch for O'Reagan et al. *in press* AmNat
-
-## Among parasite competition
-
-![](/home/max/Dropbox/esa2015/johnson.jpg)
-
-## Theoretical gaps
-
-Multi-host, multi-parasite systems: 
-
-- interaction between host and parasite diversity? 
-- role of competition? 
-- evolution and diversity?
-- mathematical tractability?
 
 ## Challenges and opportunities
 
-1. **Linking existing theory and data**
+1. **Thinking beyond the mean effect**
 
-- Competence, extirpation risk, and life history
-- Modes of transmission
-- Competition
+- What explains the variance?
 
-2. **Extending the framework**
+2. **Transmission dynamics**
 
-- *Biodiversity and symbionts*
+- What models have support? 
+- How to our predictions change?
+
+3. **Biodiversity and symbionts**
 
 ## Biodiversity and symbionts
 
