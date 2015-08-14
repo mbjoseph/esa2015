@@ -19,7 +19,7 @@ output:
 
 ## A simple enough question
 
-What is the generality of the dilution effect?
+How general are these phenomena?
 
 ## Generality
 
@@ -155,13 +155,13 @@ mtext("Disease risk", side=2,
 
 ## Some assertions
 
-Regardless of the mean effect,
+Regardless of the mean effect
 
 1) We all care about variation
 
 ## Some assertions
 
-Regardless of the mean effect,
+Regardless of the mean effect
 
 1) We all care about variation
 2) Explaining the variation should be a common goal
