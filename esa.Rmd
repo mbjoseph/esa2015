@@ -11,11 +11,15 @@ output:
       in_header: sty.txt
 ---
 
-## Dilution or amplification? 
+## Preliminaries
 
-Contention
+**Dilution effect**: biodiversity reduces disease risk
 
-1) 'generality'
+**Amplification effect**: biodiversity increases disease risk
+
+## A simple enough question
+
+What is the generality of the dilution effect?
 
 ## Generality
 
@@ -56,33 +60,15 @@ ggplot(d) +
   geom_vline(xintercept=0, linetype='dashed')
 ```
 
-## Dilution or amplification? 
-
-Contention
-
-1) 'generality'
-2) applicability to human disease
-
-## Applicability to human disease
-
-\centerline{\includegraphics[height=2in]{civitello.png}}
-
-Civitello et al. 2015
-
-## Dilution or amplification? 
-
-Contention
-
-1) 'generality'
-2) applicability to human disease
-3) justification for conservation
 
 ## Thought experiment
 
 Assume that we know $\mu_{\beta_{diversity}} < 0$
 
+i.e. biodiversity reduces disease risk on average
+
 ```{r, echo=FALSE, fig.width=4, fig.height=4, fig.align='center'}
-plot(1:100, -2 * 1:100, type='l',
+plot(1:100, -1 * 1:100, type='l',
      xaxt='n', yaxt='n', 
      ylab='', xlab='')
 mtext("Species richness", side=1, 
@@ -91,61 +77,94 @@ mtext("Disease risk", side=2,
       line=0.2)
 ```
 
-## Variance matters
-
-Assuming biodiversity reduces disease on average:
-
-```{r, echo=FALSE, fig.width=6, fig.height=6, fig.align='center'}
-mu_beta <- c(-.1, -1)
-sigma_beta <- c(.1, 1)
-n_slopes <- 20
-x <- seq(-5, 5, .01)
-par(mfrow=c(2, 2))
-for (i in 1:length(mu_beta)){
-  for (j in 1:length(sigma_beta)){
-    plot(x=x, y=dnorm(x, mu_beta[i], sigma_beta[j]),  
-         xlab="Effect of host richness on disease", 
-         ylab="Probability density", 
-         type='l')
-    polygon(x=c(0, 0, x[x > 0]), 
-            y=c(0, dnorm(0, mu_beta[i], sigma_beta[j]), 
-                dnorm(x[x > 0], mu_beta[i], sigma_beta[j])), 
-            col='red')
-    mtext(bquote(~ mu[beta] == .(mu_beta[i])), side=3, line=2)
-    mtext(bquote(~ sigma[beta] == .(sigma_beta[j])), side=3, line=1)
-    abline(v=0, lty=2)
-  }
-}
-```
-
-## Regardless of the mean
-
-**We all care about variation**
 
 ## Thought experiment
 
-If we knew biodiversity was good for our health, 
+Assume that we know $\mu_{\beta_{diversity}} < 0$
 
-would we conserve biodiversity?
+- effects vary across systems
 
-## Actual causes of death in the U.S.
+$$\beta_i \sim N(\mu_{\beta_{diversity}}, \sigma)$$
 
-```{r echo=FALSE, fig.width=4, fig.height=2.5, fig.align='center'}
-Cause <- c("Tobacco", "Poor diet/inactivity", "Alcohol consumption", "Microbial agents", "Toxic agents", "Motor vehicle", "Firearms", "Sexual behavior", "Illicit drug use")
-Percent <- c(18.1, 16.6, 3.5, 3.1, 2.3, 1.8, 1.2, .8, .7)
-d <- data.frame(Cause, Percent)
-d$cause <- reorder(d$Cause, order(Percent, decreasing=TRUE))
-ggplot(d) + 
-  geom_bar(aes(x=cause, y=Percent), stat='identity') + 
-  xlab("Cause of death") + 
-  ylab("Percent of total deaths") + 
-  theme(axis.text.x=element_text(angle=45, hjust=1)) + 
-  theme(axis.title.y = element_text(size = rel(.7))) + 
-  theme(axis.title.x = element_text(size=rel(.7))) + 
-  theme(axis.text.x = element_text(size=rel(.7), color='black'))
+## Variance matters
+
+$\beta \sim N(\mu_{\beta}, \sigma)$
+
+$\mu_{\beta} < 0, \sigma$ low
+
+```{r, echo=FALSE, fig.width=4, fig.height=4, fig.align='center'}
+library(scales)
+n <- 100
+slopes <- rnorm(n, -1, .2)
+plot(-1:1, -1 * (-1:1), type='l',
+     xaxt='n', yaxt='n', 
+     ylab='', xlab='', col="red", lwd=5)
+for (i in 1:n){
+  lines(x=-1:1, y=slopes[i] * (-1:1), col=alpha(1, .4))
+}
+mtext("Species richness", side=1, 
+      line=0.2)
+mtext("Disease risk", side=2, 
+      line=0.2)
 ```
 
-Mokdad et al. 2004.
+
+
+## Variance matters
+
+$\beta \sim N(\mu_{\beta}, \sigma)$
+
+$\mu_{\beta} < 0, \sigma$ medium
+
+```{r, echo=FALSE, fig.width=4, fig.height=4, fig.align='center'}
+library(scales)
+slopes <- rnorm(n, -1, .9)
+plot(-1:1, -1 * (-1:1), type='l',
+     xaxt='n', yaxt='n', 
+     ylab='', xlab='', col="red", lwd=5)
+for (i in 1:n){
+  lines(x=-1:1, y=slopes[i] * (-1:1), col=alpha(1, .4))
+}
+mtext("Species richness", side=1, 
+      line=0.2)
+mtext("Disease risk", side=2, 
+      line=0.2)
+```
+
+
+## Variance matters
+
+$\beta \sim N(\mu_{\beta}, \sigma)$
+
+$\mu_{\beta} < 0, \sigma$ high
+
+```{r, echo=FALSE, fig.width=4, fig.height=4, fig.align='center'}
+library(scales)
+slopes <- rnorm(n, -1, 2)
+plot(-1:1, -1 * (-1:1), type='l',
+     xaxt='n', yaxt='n', 
+     ylab='', xlab='', col="red", lwd=5)
+for (i in 1:n){
+  lines(x=-1:1, y=slopes[i] * (-1:1), col=alpha(1, .4))
+}
+mtext("Species richness", side=1, 
+      line=0.2)
+mtext("Disease risk", side=2, 
+      line=0.2)
+```
+
+## Some assertions
+
+Regardless of the mean effect,
+
+1) We all care about variation
+
+## Some assertions
+
+Regardless of the mean effect,
+
+1) We all care about variation
+2) Explaining the variation should be a common goal
 
 ## Challenges and opportunities
 
@@ -156,8 +175,6 @@ Mokdad et al. 2004.
 ## Challenges and opportunities
 
 1. **Thinking beyond the mean effect**
-
-- What explains the variance?
 
 2. **Transmission dynamics**
 
@@ -183,19 +200,28 @@ Contact rate independent from $N$
 
 Ostfeld and Keesing 2012
 
+Rudolf and Antonovics 2005
+
+Dobson 2004
+
+Joseph et al. 2013
+
+Mihaljevic et al. 2013
+
 ## Other transmission functions
 
 Constant risk:
 
-$\dfrac{dI}{dt} = \beta S$
+$\beta S$
 
 Power law:
 
-$\dfrac{dI}{dt} = \beta S^p I^q$
+$\beta S^p I^q$
 
 Negative binomial:
 
-$\dfrac{dI}{dt} = (kS) log(1 + \frac{\beta I}{k})$
+$kS log(1 + \frac{\beta I}{k})$
+
 
 ## Support for other transmission functions
 
@@ -232,6 +258,8 @@ ggplot(pd, aes(x=result)) +
 - $H$: number of hosts
 - $t$: exposure time
 - $\frac{P}{v}$: parasite density
+
+3) Fit models, evaluate support with information theoretics
 
 ## Evaluating support for different models
 
@@ -344,24 +372,17 @@ What else might we expect theoretically?
 
 1. **Thinking beyond the mean effect**
 
-- What explains the variance?
-
 2. **Transmission dynamics**
 
-- What models have support? 
-- How to our predictions change?
+- What models have empirical support? 
+- How to theoretical expectations change?
 
 
 ## Challenges and opportunities
 
 1. **Thinking beyond the mean effect**
 
-- What explains the variance?
-
 2. **Transmission dynamics**
-
-- What models have support? 
-- How to our predictions change?
 
 3. **Biodiversity and symbionts**
 
@@ -385,7 +406,7 @@ Questions:
 
 ## Model structure
 
-![](/home/max/Dropbox/esa2015/model_struct.pdf)
+\centerline{\includegraphics[height=5in]{model_struct.pdf}}
 
 github.com/mbjoseph/abm
 
@@ -430,6 +451,12 @@ legend('topleft', col=c(3, 1, 2), legend=c("Mutualists", "Commensals", "Parasite
        bty='n', lty=rep(1, 3))
 ```
 
+## Model structure
+
+\centerline{\includegraphics[height=5in]{model_struct.pdf}}
+
+github.com/mbjoseph/abm
+
 ## Model predictions
 
 \centerline{\includegraphics[height=3in]{contour.pdf}}
@@ -457,39 +484,23 @@ San Francisco Bay Area amphibian parasites
 
 1. **Thinking beyond the mean effect**
 
-- What explains the variance?
-
 2. **Transmission dynamics**
-
-- What models have support? 
-- How to our predictions change?
 
 3. **Biodiversity and symbionts**
 
 - Relationships between host and symbiont diversity
+- Parasites, commensals, and mutualists
 - Interplay b/t host diversity and symbiont transmission
-- Parasites, commensals, and symbionts
 
-## Acknowledgements
+## Challenges and opportunities
 
-Pieter Johnson
+1. **Thinking beyond the mean effect**
 
-Joseph Mihaljevic
+2. **Transmission dynamics**
 
-Dan Preston
+3. **Biodiversity and symbionts**
 
-EBIO QDT
-
-CU Research Computing
-
-NSF GRFP
-
-## Thank you
-
-
-
-
-
+4. **Scale transitions**
 
 ## Scale transitions
 
@@ -511,8 +522,43 @@ Local dynamics $\neq$ regional dynamics if
 - densities vary spatially
 - conditions vary spatially
 
-
 (Chesson et al. 2005)
+
+## Challenges and opportunities
+
+1. **Thinking beyond the mean effect**
+
+2. **Transmission dynamics**
+
+3. **Biodiversity and symbionts**
+
+4. **Scale transitions**
+
+- is the existing theory useful?
+
+## Acknowledgements
+
+Pieter Johnson
+
+Joseph Mihaljevic
+
+Chelsea Wood
+
+Sarah Orlofske
+
+Dan Preston
+
+EBIO QDT
+
+Support from: NSF GRFP, CU Research Computing
+
+## Thank you
+
+slides: github.com/mbjoseph/esa2015
+
+symbiont model: github.com/mbjoseph/abm
+
+e-mail: maxwell.b.joseph@colorado.edu
 
 ## Temporal scale discrepancies
 
@@ -533,3 +579,36 @@ Most data: integrated quantities
 Similar to habitat area-heterogeneity trade-off in free living species
 
 ![](/home/max/Documents/manuscripts/grazing/presentations/CSU_visit/allouche2.pdf)
+
+
+## Dilution and amplification
+
+Points of contention
+
+1) generality
+2) justification for conservation
+
+## Question
+
+If we knew biodiversity was good for our health, 
+
+would we conserve biodiversity?
+
+## Actual causes of death in the U.S.
+
+```{r echo=FALSE, fig.width=4, fig.height=2.5, fig.align='center'}
+Cause <- c("Tobacco", "Poor diet/inactivity", "Alcohol consumption", "Microbial agents", "Toxic agents", "Motor vehicle", "Firearms", "Sexual behavior", "Illicit drug use")
+Percent <- c(18.1, 16.6, 3.5, 3.1, 2.3, 1.8, 1.2, .8, .7)
+d <- data.frame(Cause, Percent)
+d$cause <- reorder(d$Cause, order(Percent, decreasing=TRUE))
+ggplot(d) + 
+  geom_bar(aes(x=cause, y=Percent), stat='identity') + 
+  xlab("Cause of death") + 
+  ylab("Percent of total deaths") + 
+  theme(axis.text.x=element_text(angle=45, hjust=1)) + 
+  theme(axis.title.y = element_text(size = rel(.7))) + 
+  theme(axis.title.x = element_text(size=rel(.7))) + 
+  theme(axis.text.x = element_text(size=rel(.7), color='black'))
+```
+
+Mokdad et al. 2004.
